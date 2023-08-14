@@ -40,8 +40,18 @@ jobs:
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-      #Push NuGet package to GitHub packages
-      
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+  
+  Nuget:
+    runs-on: ubuntu-latest
+
+
+    steps:
       - name: Zipping the Package
         run: dotnet pack --configuration Release
       - name: Add Source
@@ -51,12 +61,6 @@ jobs:
         run: dotnet nuget push /bin/Release/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source github
 
 
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
 
 #  deploy:
 #    runs-on: ubuntu-latest
