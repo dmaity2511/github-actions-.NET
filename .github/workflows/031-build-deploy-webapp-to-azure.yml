@@ -39,21 +39,17 @@ jobs:
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
       #Push NuGet package to GitHub packages
       
-      - name: package the project
-        run: dotnet new console --name .net-app
-
-      - name: package the project
+      - name: Zipping the Package
         run: dotnet pack --configuration Release
-
-      - name: Prep packages
+      - name: Add Source
+#       run: dotnet nuget add source --username ${{ secrets.USER_NAME }} --password ${{ secrets.API_KEY }} --store-password-in-clear-text --name ${{vars.NUGET_LINK}} ${{vars.NUGET_SOURCE}}
         run: dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
+      - name: Publish the Package
+        run: dotnet nuget push /bin/Release/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source github
 
-      - name: Push package to GitHub packages 
-#      if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change  
-        run: dotnet nuget push "bin/Release/.net-app.1.0.0.nupkg"  --api-key PAT_TOKEN --source "github"
-#        run: dotnet nuget push nugetPackage/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source "github"
 
 
       - name: Upload artifact for deployment job
