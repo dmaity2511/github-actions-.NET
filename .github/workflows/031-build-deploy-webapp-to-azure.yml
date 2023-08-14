@@ -69,13 +69,11 @@ jobs:
 
 #Push NuGet package to GitHub packages
 
-      - name: Download nuget package artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: .net-app
+      - name:  create new project
+        run: dotnet new console --name .net-app
 
-      - name: Prep packages
-        run: dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
+      - name: package the project
+        run: dotnet pack --configuration Release
       - name: Push package to GitHub packages 
-        if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change  
-        run: dotnet nuget push nugetPackage/*.nupkg --api-key ${{ secrets.PAT_TOKEN }} --source "github"
+#      if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change  
+        run: dotnet nuget push "bin/Release/.net-app.1.0.0.nupkg"  --api-key PAT_TOKEN --source "github"
