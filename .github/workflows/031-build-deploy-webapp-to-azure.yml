@@ -73,7 +73,7 @@ jobs:
         run: dotnet new console --name .net-app
 
       - name: package the project
-        run: dotnet pack --configuration Release
+        run: dotnet pack 03-app-dotnet/app-dotnet.csproj --configuration Release
       - name: Push package to GitHub packages 
 #      if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change  
         run: dotnet nuget push "bin/Release/.net-app.1.0.0.nupkg"  --api-key PAT_TOKEN --source "github"
