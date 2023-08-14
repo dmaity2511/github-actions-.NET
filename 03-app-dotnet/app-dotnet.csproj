@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RepositoryUrl>https://github.com/dmaity2511/github-actions-.NET/packages</RepositoryUrl>
+    <RepositoryUrl>https://github.com/dmaity2511/github-actions-.NET</RepositoryUrl>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>app_dotnet</RootNamespace>
