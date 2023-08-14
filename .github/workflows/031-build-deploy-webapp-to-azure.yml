@@ -46,15 +46,6 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-  
-  Nuget:
-    runs-on: ubuntu-latest
-    needs: build
-    defaults:
-      run:
-        working-directory: 03-app-dotnet
-
-    steps:
       - name: Zipping the Package
         run: dotnet pack --configuration Release
       - name: Add Source
