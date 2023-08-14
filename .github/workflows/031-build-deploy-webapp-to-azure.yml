@@ -49,7 +49,7 @@ jobs:
   
   Nuget:
     runs-on: ubuntu-latest
-
+    needs: build
 
     steps:
       - name: Zipping the Package
