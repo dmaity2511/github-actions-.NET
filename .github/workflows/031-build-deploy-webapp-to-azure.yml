@@ -51,11 +51,16 @@ jobs:
           dotnet pack --configuration Release
           export PACKAGE_PATH=$(find $GITHUB_WORKSPACE -name '*.nupkg' -print -quit)
 
+      - name: Find Package
+        run: |
+          PACKAGE_PATH=$(find $GITHUB_WORKSPACE -name '*.nupkg' -print -quit)
+          echo "::set-output name=package_path::$PACKAGE_PATH"
+
       - name: Add Source
         run: dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
 
       - name: Publish the Package
-        run: dotnet nuget push $PACKAGE_PATH --api-key ${{ secrets.PAT_TOKEN }} --source github
+        run: dotnet nuget push ${{ steps.pack.outputs.package_path }} --api-key ${{ secrets.PAT_TOKEN }} --source github
 
   deploy:
     runs-on: ubuntu-latest
