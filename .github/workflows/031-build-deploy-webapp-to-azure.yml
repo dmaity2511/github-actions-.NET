@@ -39,13 +39,6 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
           
-      - name: Zipping the Package
-        run: dotnet pack --configuration Release
-      - name: Add Source
-        run: dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
-      - name: Publish the Package
-        run: dotnet nuget push /home/runner/work/github-actions-.NET/github-actions-.NET/03-app-dotnet/bin/Release/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source github
-
 
 
   deploy:
