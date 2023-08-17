@@ -3,6 +3,8 @@ name: Build-deploy-webapp-to-azure
 env:
   AZURE_WEBAPP_NAME: debgithub-actions-workflow    # set this to the name of your Azure Web App
   DOTNET_VERSION: '6.0.x'                       # set this to the .NET Core version to use
+  PACKAGING: ${{ false }}
+
 
 on:
   push:
@@ -44,7 +46,7 @@ jobs:
   publish-package:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ env.PACKAGING_NEEDED == 'true' }}
+    if: ${{ env.PACKAGING }} == true
 
     defaults:
       run:
@@ -58,9 +60,6 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Set Packaging Flag
-        run: echo "PACKAGING_NEEDED=false" >> $GITHUB_ENV
 
       - name: Publish the Package
         run: |
