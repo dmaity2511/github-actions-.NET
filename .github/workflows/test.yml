@@ -1,0 +1,68 @@
+name: Build-deploy-webapp-to-azure
+
+env:
+  AZURE_WEBAPP_NAME: debgithub-actions-workflow    # set this to the name of your Azure Web App
+  DOTNET_VERSION: '6.0.x'                       # set this to the .NET Core version to use
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: 03-app-dotnet
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Set Packaging Flag
+        run: echo "PACKAGING_NEEDED=true" >> $GITHUB_ENV
+
+  publish-package:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Publish the Package
+        run: |
+          if [ "${{ env.PACKAGING_NEEDED }}" == "true" ]; then
+            echo "Packaging"
+            dotnet pack --configuration Release
+            dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
+            dotnet nuget push /home/runner/work/github-actions-.NET/github-actions-.NET/03-app-dotnet/bin/Release/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source github
+          else
+            echo "Packaging is skipped"
+          fi
+        env:
+          PACKAGING_NEEDED: ${{ env.PACKAGING_NEEDED }}
