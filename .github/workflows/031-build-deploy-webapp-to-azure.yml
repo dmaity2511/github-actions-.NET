@@ -49,7 +49,7 @@ jobs:
         run: |
           if [ "${{ env.PACKAGING_NEEDED }}" == "true" ]; then
             echo "Packaging"
-            run: dotnet nuget push /home/runner/work/github-actions-.NET/github-actions-.NET/03-app-dotnet/bin/Release/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source github
+            dotnet nuget push /home/runner/work/github-actions-.NET/github-actions-.NET/03-app-dotnet/bin/Release/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source github
           else
             echo "Skipping packaging"
           fi
