@@ -37,8 +37,15 @@ jobs:
         run: dotnet pack --configuration Release
       - name: Add Source
         run: dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
+        
+      - name: Ask for packaging
+        id: ask-for-packaging
+        run: echo "Is packaging needed?" 
+        continue-on-error: true
+        
       - name: Publish the Package
         run: dotnet nuget push /home/runner/work/github-actions-.NET/github-actions-.NET/03-app-dotnet/bin/Release/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source github
+        if: ${{ steps.ask-for-packaging.outputs.result == 'yes' }}  # Only execute if packaging is needed
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
