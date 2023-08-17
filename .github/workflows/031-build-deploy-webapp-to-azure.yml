@@ -33,10 +33,16 @@ jobs:
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-      - name: Zipping the Package
-        run: dotnet pack --configuration Release
-      - name: Add Source
-        run: dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+#      - name: Zipping the Package
+#        run: dotnet pack --configuration Release
+#      - name: Add Source
+#        run: dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
         
       - name: Set Packaging Flag
         run: echo "PACKAGING_NEEDED=true" >> $GITHUB_ENV
@@ -49,6 +55,8 @@ jobs:
         run: |
           if [ "${{ env.PACKAGING_NEEDED }}" == "true" ]; then
             echo "Packaging"
+            dotnet pack --configuration Release
+            dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
             dotnet nuget push /home/runner/work/github-actions-.NET/github-actions-.NET/03-app-dotnet/bin/Release/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source github
           else
             echo "Skipping packaging"
@@ -56,11 +64,7 @@ jobs:
         env:
           PACKAGING_NEEDED: ${{ env.PACKAGING_NEEDED }}
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+
           
 
 
