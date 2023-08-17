@@ -44,6 +44,8 @@ jobs:
   publish-package:
     needs: build
     runs-on: ubuntu-latest
+    if: ${{ env.PACKAGING_NEEDED == 'true' }}
+
     defaults:
       run:
         working-directory: 03-app-dotnet
@@ -62,18 +64,10 @@ jobs:
 
       - name: Publish the Package
         run: |
-          if [ "${{ env.PACKAGING_NEEDED }}" == "true" ]; then
-            echo "Packaging"
             dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
             dotnet pack --configuration Release
             dotnet nuget add source --username dmaity2511 --password ${{ secrets.PAT_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmaity2511/index.json"
             dotnet nuget push /home/runner/work/github-actions-.NET/github-actions-.NET/03-app-dotnet/bin/Release/*.nupkg --api-key ${{ secrets.PAT_TOKEN }}  --source github
-          else
-            echo "Packaging is skipped"
-          fi
-        env:
-          PACKAGING_NEEDED: ${{ env.PACKAGING_NEEDED }}
-
     
   deploy:
     runs-on: self-hosted
