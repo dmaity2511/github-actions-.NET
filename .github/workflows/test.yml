@@ -58,7 +58,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Set Packaging Flag
-        run: echo "PACKAGING_NEEDED=true" >> $GITHUB_ENV
+        run: echo "PACKAGING_NEEDED=false" >> $GITHUB_ENV
 
       - name: Publish the Package
         run: |
