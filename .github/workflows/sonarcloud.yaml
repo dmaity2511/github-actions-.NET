@@ -15,6 +15,7 @@ name: SonarCloud Scan
 # Start the job on all push #
 #############################
 on:
+  workflow_dispatch:
   push:
     branches:
       - "master"
