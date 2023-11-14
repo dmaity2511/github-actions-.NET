@@ -1,4 +1,4 @@
-name: Build-deploy-webapp-to-azure
+name: Build-deploy-webapp-to-Azure
 
 env:
   AZURE_WEBAPP_NAME: debgithub-actions-workflow    # set this to the name of your Azure Web App
